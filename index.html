@@ -5,36 +5,41 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
   <title>Nx Earn</title>
 
-  <!-- 1. Monetag SDK Script -->
+  <!-- Monetag SDK Script -->
   <script src='//libtl.com/sdk.js' data-zone='9388728' data-sdk='show_9388728'></script>
 
-  <!-- 2. Telegram Web App Script -->
+  <!-- Telegram Web App Script -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: sans-serif;
+      text-align: center;
+      background: #f8f8f8;
       padding: 20px;
-      background: #f0f0f0;
+    }
+    h1 {
+      color: #3b3b3b;
     }
     button {
       padding: 10px 20px;
-      margin-top: 10px;
+      margin: 10px;
       font-size: 16px;
+      cursor: pointer;
     }
-    .section {
+    input, select {
+      padding: 8px;
+      margin: 5px;
+      width: 90%;
+      max-width: 300px;
+    }
+    form {
+      margin-top: 30px;
       background: #fff;
       padding: 15px;
-      margin-bottom: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px #ccc;
-    }
-    input {
-      display: block;
-      margin: 8px 0;
-      padding: 8px;
-      width: 100%;
-      box-sizing: border-box;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      display: inline-block;
     }
   </style>
 </head>
@@ -42,93 +47,101 @@
   <h1>Nx Earn</h1>
   <p>Watch Ads and Earn USDT</p>
 
-  <!-- Balance Section -->
-  <div class="section" id="balance-section">
-    <strong>Balance: USDT <span id="balance">0.00</span></strong><br>
-    <button onclick="requestAd()">Watch Ad (+0.01 USDT)</button>
-  </div>
+  <div id="balance">Balance: USDT 0.00</div>
+  <button onclick="requestAd()">Watch Ad (+0.01 USDT)</button>
 
-  <!-- Withdrawal Section -->
-  <div class="section">
-    <h3>Withdrawal</h3>
-    <select id="method" onchange="toggleFields()">
-      <option value="">Select Method</option>
-      <option value="bkash">Bkash</option>
-      <option value="binance">Binance</option>
+  <form id="withdrawalForm">
+    <h3>Withdraw</h3>
+    <select id="paymentOption" required>
+      <option value="" disabled selected>Select Payment Option</option>
+      <option value="Bkash">Bkash</option>
+      <option value="Binance">Binance</option>
     </select>
 
     <div id="bkashFields" style="display: none;">
-      <input type="text" id="bkashNumber" placeholder="Bkash Number">
+      <input type="text" placeholder="Enter Your Bkash Number" id="bkashNumber" />
     </div>
 
     <div id="binanceFields" style="display: none;">
-      <input type="text" id="binanceUID" placeholder="Binance UID">
+      <input type="text" placeholder="Enter Binance UID" id="binanceUID" />
     </div>
 
-    <input type="number" id="amount" placeholder="Enter Amount">
-    <input type="email" id="gmail" placeholder="Enter Gmail">
+    <input type="number" placeholder="Enter Amount" id="amount" required />
+    <input type="email" placeholder="Enter Your Gmail" id="gmail1" required />
+    <input type="email" placeholder="Confirm Gmail" id="gmail2" required />
 
-    <button onclick="submitWithdrawal()">Submit Withdrawal</button>
-  </div>
+    <button type="submit">Submit Withdrawal</button>
+  </form>
 
   <script>
     const ADMIN_ID = 7580544870;
     const BOT_USERNAME = '@NxEranBot';
     const WEBAPP_NAME = 'Nx Earn';
+
     let balance = 0;
 
     function requestAd(type = 'rewarded') {
       show_9388728(type === 'popup' ? 'pop' : undefined)
         .then(() => {
           balance += 0.01;
-          document.getElementById('balance').textContent = balance.toFixed(2);
+          document.getElementById('balance').textContent = `Balance: USDT ${balance.toFixed(2)}`;
         })
         .catch(() => alert("Ad failed or skipped"));
     }
 
-    function toggleFields() {
-      const method = document.getElementById('method').value;
-      document.getElementById('bkashFields').style.display = method === 'bkash' ? 'block' : 'none';
-      document.getElementById('binanceFields').style.display = method === 'binance' ? 'block' : 'none';
-    }
+    // Withdrawal form logic
+    const form = document.getElementById('withdrawalForm');
+    const paymentOption = document.getElementById('paymentOption');
+    const bkashFields = document.getElementById('bkashFields');
+    const binanceFields = document.getElementById('binanceFields');
 
-    function submitWithdrawal() {
-      const method = document.getElementById('method').value;
-      const gmail = document.getElementById('gmail').value;
+    paymentOption.addEventListener('change', () => {
+      bkashFields.style.display = paymentOption.value === 'Bkash' ? 'block' : 'none';
+      binanceFields.style.display = paymentOption.value === 'Binance' ? 'block' : 'none';
+    });
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const option = paymentOption.value;
       const amount = document.getElementById('amount').value;
-      const tgUser = window.Telegram.WebApp.initDataUnsafe?.user || {};
-      const username = tgUser.username || 'unknown';
-      const userId = tgUser.id || 'unknown';
-      const name = tgUser.first_name || 'unknown';
+      const gmail1 = document.getElementById('gmail1').value;
+      const gmail2 = document.getElementById('gmail2').value;
 
-      let account = '';
-      if (method === 'bkash') {
-        account = document.getElementById('bkashNumber').value;
-      } else if (method === 'binance') {
-        account = document.getElementById('binanceUID').value;
-      }
-
-      if (!method || !account || !amount || !gmail) {
-        alert("Please fill all fields");
+      if (gmail1 !== gmail2) {
+        alert("Gmail addresses do not match.");
         return;
       }
 
-      const details = `
-🔔 New Withdrawal Request 🔔
-👤 Name: ${name}
-📧 Gmail: ${gmail}
-💸 Amount: ${amount} USDT
-💳 ${method === 'bkash' ? 'Bkash Number' : 'Binance UID'}: ${account}
-💰 Method: ${method.toUpperCase()}
-🧑‍💻 Username: @${username}
-🆔 Telegram ID: ${userId}
-      `;
+      const tg = window.Telegram.WebApp;
+      const user = tg.initDataUnsafe.user;
 
-      // Send data to bot via Telegram API (you must handle this in your bot backend)
-      alert("Withdrawal request sent:\n\n" + details);
-    }
+      let userData = {
+        name: user.first_name || '',
+        username: user.username || '',
+        telegram_id: user.id,
+        gmail: gmail1,
+        amount: amount,
+        payment_option: option,
+        number_or_uid: option === 'Bkash'
+          ? document.getElementById('bkashNumber').value
+          : document.getElementById('binanceUID').value
+      };
 
-    Telegram.WebApp.ready();
+      // Send to admin (use bot backend or Telegram API here)
+      alert(
+        `Withdrawal Request Sent!\n\n` +
+        `Name: ${userData.name}\n` +
+        `Username: @${userData.username}\n` +
+        `Telegram ID: ${userData.telegram_id}\n` +
+        `Gmail: ${userData.gmail}\n` +
+        `Amount: ${userData.amount} USDT\n` +
+        `Option: ${userData.payment_option}\n` +
+        `Number/UID: ${userData.number_or_uid}`
+      );
+
+      // You should send this data to your Telegram bot backend (not shown here)
+    });
   </script>
 </body>
 </html>
