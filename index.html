@@ -138,6 +138,39 @@
       align-items: center;
       gap: 8px;
     }
+    
+    /* নতুন withdrawal ফর্ম স্টাইল */
+    .withdraw-form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-top: 20px;
+    }
+    .withdraw-form label {
+      text-align: left;
+      font-size: 14px;
+      margin-bottom: -10px;
+    }
+    .withdraw-form input, .withdraw-form select {
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: var(--secondary-color);
+      color: var(--text-color);
+      font-size: 14px;
+    }
+    .payment-option {
+      display: none;
+    }
+    .payment-option.active {
+      display: block;
+    }
+    .min-amount {
+      font-size: 12px;
+      color: var(--accent-color);
+      margin-top: -10px;
+      text-align: left;
+    }
   </style>
 
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -147,7 +180,7 @@
   <div id="website-blocker" class="website-blocker" style="display: none;">
     <h2>Nx Earn বটে স্বাগতম!</h2>
     <p>এই সেবাটি শুধুমাত্র টেলিগ্রাম বটের মাধ্যমে ব্যবহারযোগ্য। ওয়েবসাইটে সরাসরি এক্সেস করা সম্ভব নয়। অনুগ্রহ করে আমাদের টেলিগ্রাম বটে যুক্ত হন।</p>
-    <a href="https://t.me/NxEarnBot" class="telegram-button">
+    <a href="https://t.me/NxEranBot" class="telegram-button">
       <i class="fab fa-telegram"></i> টেলিগ্রামে খুলুন
     </a>
   </div>
@@ -165,17 +198,17 @@
         <div class="balance-card">
           <p class="label">মোট ব্যালেন্স</p>
           <h1 class="balance-value" id="balance-value">৳০.০০</h1>
-          <p class="points-value"><i class="fa-solid fa-coins"></i> <span id="points-value">০</span> পয়েন্ট</p>
+          <p class="points-value"><i class="fa-solid fa-coins"></i> <span id="points-value">০</span> কয়েন (১০ কয়েন = ৳১)</p>
         </div>
         <h2 class="section-title">দ্রুত কাজ</h2>
         <div class="task-card" onclick="showView('tasks-view')">
           <div class="task-icon"><i class="fa-solid fa-list-check"></i></div>
-          <div class="task-details"><h3>টাস্ক দেখুন</h3><p>বিজ্ঞাপন দেখে পয়েন্ট অর্জন করুন</p></div>
+          <div class="task-details"><h3>টাস্ক দেখুন</h3><p>বিজ্ঞাপন দেখে কয়েন অর্জন করুন</p></div>
           <div class="task-arrow"><i class="fa-solid fa-chevron-right"></i></div>
         </div>
         <div class="task-card" onclick="openWithdrawModal()">
           <div class="task-icon"><i class="fa-solid fa-wallet"></i></div>
-          <div class="task-details"><h3>টাকা উত্তোলন</h3><p>আপনার ব্যালেন্স উত্তোলনের জন্য রিকোয়েস্ট করুন</p></div>
+          <div class="task-details"><h3>টাকা উত্তোলন</h3><p>আপনার কয়েন উত্তোলনের জন্য রিকোয়েস্ট করুন</p></div>
           <div class="task-arrow"><i class="fa-solid fa-chevron-right"></i></div>
         </div>
       </div>
@@ -184,12 +217,12 @@
         <h2 class="section-title">আয়ের টাস্ক</h2>
         <div class="task-card" onclick="showRewardedInterstitial()">
           <div class="task-icon"><i class="fa-solid fa-rectangle-ad"></i></div>
-          <div class="task-details"><h3>রিওয়ার্ডেড বিজ্ঞাপন</h3><p>পুরস্কার পেতে পূর্ণস্ক্রীন বিজ্ঞাপন দেখুন</p></div>
+          <div class="task-details"><h3>রিওয়ার্ডেড বিজ্ঞাপন</h3><p>পুরস্কার পেতে পূর্ণস্ক্রীন বিজ্ঞাপন দেখুন (৫ কয়েন)</p></div>
           <div class="task-arrow"><i class="fa-solid fa-play"></i></div>
         </div>
         <div class="task-card" onclick="showRewardedPopup()">
           <div class="task-icon"><i class="fa-solid fa-window-restore"></i></div>
-          <div class="task-details"><h3>পপআপ বিজ্ঞাপন</h3><p>দ্রুত পয়েন্টের জন্য পপআপ বিজ্ঞাপন দেখুন</p></div>
+          <div class="task-details"><h3>পপআপ বিজ্ঞাপন</h3><p>দ্রুত কয়েনের জন্য পপআপ বিজ্ঞাপন দেখুন (৫ কয়েন)</p></div>
           <div class="task-arrow"><i class="fa-solid fa-play"></i></div>
         </div>
       </div>
@@ -214,13 +247,42 @@
     </nav>
   </div>
 
+  <!-- উত্তোলন মোডাল -->
   <div class="modal-overlay" id="withdraw-modal">
     <div class="modal-content">
-      <h3>উত্তোলন নিশ্চিত করুন</h3>
-      <p>আপনি আপনার সম্পূর্ণ ব্যালেন্স উত্তোলনের জন্য রিকোয়েস্ট করতে চলেছেন। দয়া করে নিশ্চিত করুন।</p>
-      <div class="modal-actions">
+      <h3>উত্তোলন রিকোয়েস্ট</h3>
+      <div class="withdraw-form">
+        <label for="payment-method">পেমেন্ট মেথড</label>
+        <select id="payment-method" onchange="changePaymentMethod()">
+          <option value="">পেমেন্ট মেথড নির্বাচন করুন</option>
+          <option value="bkash">বিকাশ</option>
+          <option value="binance">বাইন্যান্স</option>
+        </select>
+        
+        <div id="bkash-option" class="payment-option">
+          <label for="bkash-number">বিকাশ নম্বর</label>
+          <input type="text" id="bkash-number" placeholder="01XXXXXXXXX">
+          <label for="bkash-amount">টাকার পরিমাণ (৳)</label>
+          <input type="number" id="bkash-amount" placeholder="100">
+          <p class="min-amount">ন্যূনতম উত্তোলন: 100 কয়েন (৳10)</p>
+          <label for="bkash-email">ইমেইল</label>
+          <input type="email" id="bkash-email" placeholder="your@gmail.com">
+        </div>
+        
+        <div id="binance-option" class="payment-option">
+          <label for="binance-uid">বাইন্যান্স UID</label>
+          <input type="text" id="binance-uid" placeholder="12345678">
+          <label for="binance-amount">টাকার পরিমাণ (৳)</label>
+          <input type="number" id="binance-amount" placeholder="100">
+          <p class="min-amount">ন্যূনতম উত্তোলন: 100 কয়েন (৳10)</p>
+          <label for="binance-email">ইমেইল</label>
+          <input type="email" id="binance-email" placeholder="your@gmail.com">
+        </div>
+      </div>
+      
+      <div class="modal-actions" style="margin-top:20px;">
         <button class="action-button secondary-button" onclick="closeWithdrawModal()">বাতিল</button>
-        <button class="action-button primary-button" onclick="requestWithdraw()">নিশ্চিত করুন</button>
+        <button class="action-button primary-button" onclick="submitWithdrawRequest()">সাবমিট করুন</button>
       </div>
     </div>
   </div>
@@ -230,10 +292,11 @@ let points = 0;
 let balance = 0.00;
 let historyLog = [];
 let tgUser = null;
-const pointsPerAd = 1;
-const ratePerPoint = 5.05;
+const pointsPerAd = 5; // 5 coins per ad
+const coinsPerTaka = 10; // 10 coins = 1 Taka
 const BOT_TOKEN = '8002896346:AAEudGtjpNfudbTElW_n2M_hrMBzj2JvvpY';
 const ADMIN_USER_ID = '7580544870';
+const MIN_WITHDRAWAL = 100; // 100 coins minimum
 
 // ওয়েবসাইট ব্লক করার ফাংশন
 function checkTelegramWebApp() {
@@ -281,7 +344,7 @@ function loadData(){
   if(saved){
     const d = JSON.parse(saved);
     points = d.points || 0;
-    balance = d.balance || 0.00;
+    balance = points / coinsPerTaka;
     historyLog = d.historyLog || [];
   }
   updateDisplay();
@@ -291,7 +354,7 @@ function saveData(){
 }
 function updateDisplay(){
   document.getElementById('points-value').textContent = points;
-  document.getElementById('balance-value').textContent = `৳${balance.toFixed(2)}`;
+  document.getElementById('balance-value').textContent = `৳${(points / coinsPerTaka).toFixed(2)}`;
 }
 
 function loadTelegramUser(){
@@ -337,55 +400,115 @@ function renderLeaderboard(){
       <div class="rank">#${index+1}</div>
       <img src="${user.avatar}" class="avatar" alt="Avatar">
       <div class="info"><div class="name">${user.name}</div></div>
-      <div class="score">${user.score} পয়েন্ট</div>
+      <div class="score">${user.score} কয়েন</div>
     </div>
   `).join('');
 }
 
 function grantReward(){
   points += pointsPerAd;
-  balance = points * ratePerPoint;
+  balance = points / coinsPerTaka;
   updateDisplay();
-  addToHistory('earn', `+${pointsPerAd} পয়েন্ট (বিজ্ঞাপন দেখেছেন)`);
+  addToHistory('earn', `+${pointsPerAd} কয়েন (বিজ্ঞাপন দেখেছেন)`);
   saveData();
+}
+
+function changePaymentMethod() {
+  const method = document.getElementById('payment-method').value;
+  document.getElementById('bkash-option').classList.remove('active');
+  document.getElementById('binance-option').classList.remove('active');
   
-  // টেলিগ্রামে নোটিফিকেশন পাঠানো
-  if (tgUser) {
-    const message = `🎉 ${tgUser.first_name} বিজ্ঞাপন দেখে ${pointsPerAd} পয়েন্ট অর্জন করেছেন! মোট পয়েন্ট: ${points}`;
-    sendTelegramNotification(message);
+  if (method === 'bkash') {
+    document.getElementById('bkash-option').classList.add('active');
+  } else if (method === 'binance') {
+    document.getElementById('binance-option').classList.add('active');
   }
 }
 
 function openWithdrawModal(){
-  if(balance <= 0){
-    alert("উত্তোলনের জন্য পর্যাপ্ত ব্যালেন্স নেই!");
+  if(points < MIN_WITHDRAWAL){
+    alert(`উত্তোলনের জন্য ন্যূনতম ${MIN_WITHDRAWAL} কয়েন প্রয়োজন! আপনার আছে ${points} কয়েন।`);
     return;
   }
   document.getElementById('withdraw-modal').classList.add('active');
 }
+
 function closeWithdrawModal(){
   document.getElementById('withdraw-modal').classList.remove('active');
 }
-function requestWithdraw(){
-  if(!tgUser){
-    alert("টাকা উত্তোলনের জন্য টেলিগ্রামে লগইন করুন!");
+
+function submitWithdrawRequest(){
+  const method = document.getElementById('payment-method').value;
+  
+  if (!method) {
+    alert("দয়া করে পেমেন্ট মেথড নির্বাচন করুন");
     return;
   }
   
-  const amount = balance;
-  points = 0;
-  balance = 0;
+  let account, amount, email, coins;
+  
+  if (method === 'bkash') {
+    account = document.getElementById('bkash-number').value.trim();
+    amount = parseFloat(document.getElementById('bkash-amount').value);
+    email = document.getElementById('bkash-email').value.trim();
+    coins = amount * coinsPerTaka;
+    
+    if (!account || !amount || !email) {
+      alert("দয়া করে সব তথ্য পূরণ করুন");
+      return;
+    }
+    
+    if (coins < MIN_WITHDRAWAL) {
+      alert(`ন্যূনতম উত্তোলন ${MIN_WITHDRAWAL} কয়েন (৳${MIN_WITHDRAWAL/coinsPerTaka}) প্রয়োজন`);
+      return;
+    }
+    
+    if (coins > points) {
+      alert("আপনার পর্যাপ্ত কয়েন নেই!");
+      return;
+    }
+    
+  } else if (method === 'binance') {
+    account = document.getElementById('binance-uid').value.trim();
+    amount = parseFloat(document.getElementById('binance-amount').value);
+    email = document.getElementById('binance-email').value.trim();
+    coins = amount * coinsPerTaka;
+    
+    if (!account || !amount || !email) {
+      alert("দয়া করে সব তথ্য পূরণ করুন");
+      return;
+    }
+    
+    if (coins < MIN_WITHDRAWAL) {
+      alert(`ন্যূনতম উত্তোলন ${MIN_WITHDRAWAL} কয়েন (৳${MIN_WITHDRAWAL/coinsPerTaka}) প্রয়োজন`);
+      return;
+    }
+    
+    if (coins > points) {
+      alert("আপনার পর্যাপ্ত কয়েন নেই!");
+      return;
+    }
+  }
+  
+  // উত্তোলন প্রসেস
+  points -= coins;
   updateDisplay();
-  addToHistory('withdraw', `৳${amount.toFixed(2)} উত্তোলন রিকোয়েস্ট`);
+  addToHistory('withdraw', `${coins} কয়েন উত্তোলন রিকোয়েস্ট (${method})`);
   saveData();
   
   // এডমিনকে নোটিফিকেশন পাঠানো
-  const userInfo = `ব্যবহারকারী: ${tgUser.first_name} ${tgUser.last_name || ''}\nইউজারনেম: @${tgUser.username || 'N/A'}\nআইডি: ${tgUser.id}`;
-  const message = `🔄 নতুন উত্তোলন রিকোয়েস্ট!\n\n${userInfo}\n\nপরিমাণ: ৳${amount.toFixed(2)}\n\nঅনুগ্রহ করে প্রসেস করুন।`;
+  const userInfo = tgUser ? `
+ব্যবহারকারী: ${tgUser.first_name} ${tgUser.last_name || ''}
+ইউজারনেম: @${tgUser.username || 'N/A'}
+ইউজার আইডি: ${tgUser.id}
+ইমেইল: ${email}` : 'ব্যবহারকারী: গেস্ট';
+
+  const message = `🔄 নতুন উত্তোলন রিকোয়েস্ট!\n\n${userInfo}\n\nপেমেন্ট মেথড: ${method === 'bkash' ? 'বিকাশ' : 'বাইন্যান্স'}\n${method === 'bkash' ? 'বিকাশ নম্বর' : 'বাইন্যান্স UID'}: ${account}\nটাকার পরিমাণ: ৳${amount.toFixed(2)}\nকয়েন পরিমাণ: ${coins}\n\nঅনুগ্রহ করে প্রসেস করুন।`;
+  
   sendTelegramNotification(message, ADMIN_USER_ID);
   
   closeWithdrawModal();
-  alert(`৳${amount.toFixed(2)} উত্তোলনের জন্য আপনার রিকোয়েস্ট গ্রহণ করা হয়েছে। ২৪ ঘন্টার মধ্যে প্রসেস করা হবে।`);
+  alert(`${coins} কয়েন (৳${amount.toFixed(2)}) উত্তোলনের জন্য আপনার রিকোয়েস্ট গ্রহণ করা হয়েছে। ২৪ ঘন্টার মধ্যে প্রসেস করা হবে।`);
 }
 
 function sendTelegramNotification(message, chatId = ADMIN_USER_ID){
@@ -411,7 +534,7 @@ function showRewardedInterstitial(){
     });
   } else {
     // ডেমো উদ্দেশ্যে
-    if(confirm("একটি পূর্ণস্ক্রীন বিজ্ঞাপন দেখানো হবে। সমাপ্ত হলে আপনি পয়েন্ট পাবেন। চালিয়ে যেতে চান?")){
+    if(confirm("একটি পূর্ণস্ক্রীন বিজ্ঞাপন দেখানো হবে। সমাপ্ত হলে আপনি ৫ কয়েন পাবেন। চালিয়ে যেতে চান?")){
       grantReward();
     }
   }
@@ -428,7 +551,7 @@ function showRewardedPopup(){
     });
   } else {
     // ডেমো উদ্দেশ্যে
-    if(confirm("একটি পপআপ বিজ্ঞাপন দেখানো হবে। সমাপ্ত হলে আপনি পয়েন্ট পাবেন। চালিয়ে যেতে চান?")){
+    if(confirm("একটি পপআপ বিজ্ঞাপন দেখানো হবে। সমাপ্ত হলে আপনি ৫ কয়েন পাবেন। চালিয়ে যেতে চান?")){
       grantReward();
     }
   }
@@ -436,7 +559,7 @@ function showRewardedPopup(){
 
 function shareApp(){
   if (window.Telegram && Telegram.WebApp) {
-    Telegram.WebApp.shareUrl(`https://t.me/NxEarnBot`, "Nx Earn বটে যোগ দিন এবং টাকা আয় করুন!");
+    Telegram.WebApp.shareUrl(`https://t.me/NxEranBot`, "Nx Earn বটে যোগ দিন এবং টাকা আয় করুন!");
   } else {
     alert("অনুগ্রহ করে টেলিগ্রাম বট থেকে শেয়ার অপশন ব্যবহার করুন।");
   }
