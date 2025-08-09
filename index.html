@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
-  <title>Tanbin Tech - Nx Bot</title>
+  <title>Nx Earn - টাকা আয় করুন সহজে</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-  <!-- GigaPub ad script (replace YOUR_PROJECT_ID) -->
+  <!-- গিগাপাব বিজ্ঞাপন স্ক্রিপ্ট -->
   <script src="https://ad.gigapub.tech/script?id=YOUR_PROJECT_ID" async></script>
 
   <style>
@@ -25,7 +25,7 @@
       margin: 0; padding: 0;
       background-color: var(--background-color);
       color: var(--text-color);
-      font-family: 'Segoe UI', 'Roboto', sans-serif;
+      font-family: 'Segoe UI', 'Roboto', 'Hind Siliguri', sans-serif;
       display: flex; justify-content: center; align-items: center;
       height: 100vh;
       -webkit-font-smoothing: antialiased;
@@ -101,80 +101,126 @@
     .modal-content h3{ margin-top:0; font-size:20px; }
     .modal-content p{ color:var(--text-muted-color); margin-bottom:25px; }
     .modal-actions { display:flex; gap:10px; }
+    
+    /* ওয়েবসাইট ব্লক করার স্টাইল */
+    .website-blocker {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--background-color);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 20px;
+      z-index: 9999;
+    }
+    .website-blocker h2 {
+      color: var(--primary-color);
+      margin-bottom: 20px;
+    }
+    .website-blocker p {
+      color: var(--text-color);
+      margin-bottom: 30px;
+      max-width: 80%;
+    }
+    .telegram-button {
+      background: #0088cc;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
   </style>
 
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
+  <!-- ওয়েবসাইট ব্লকার ডিভ -->
+  <div id="website-blocker" class="website-blocker" style="display: none;">
+    <h2>Nx Earn বটে স্বাগতম!</h2>
+    <p>এই সেবাটি শুধুমাত্র টেলিগ্রাম বটের মাধ্যমে ব্যবহারযোগ্য। ওয়েবসাইটে সরাসরি এক্সেস করা সম্ভব নয়। অনুগ্রহ করে আমাদের টেলিগ্রাম বটে যুক্ত হন।</p>
+    <a href="https://t.me/NxEarnBot" class="telegram-button">
+      <i class="fab fa-telegram"></i> টেলিগ্রামে খুলুন
+    </a>
+  </div>
+
   <div class="container">
     <main id="main-content">
       <div id="home-view" class="view active">
         <div class="user-header-card">
-          <div class="user-avatar" id="profile-pic">EE</div>
+          <div class="user-avatar" id="profile-pic">NU</div>
           <div class="user-info">
-            <h2 class="username" id="username">Loading...</h2>
-            <p class="title">Welcome Back!</p>
+            <h2 class="username" id="username">লোড হচ্ছে...</h2>
+            <p class="title">আবারও স্বাগতম!</p>
           </div>
         </div>
         <div class="balance-card">
-          <p class="label">Total Balance</p>
-          <h1 class="balance-value" id="balance-value">$0.00</h1>
-          <p class="points-value"><i class="fa-solid fa-coins"></i> <span id="points-value">0</span> Points</p>
+          <p class="label">মোট ব্যালেন্স</p>
+          <h1 class="balance-value" id="balance-value">৳০.০০</h1>
+          <p class="points-value"><i class="fa-solid fa-coins"></i> <span id="points-value">০</span> পয়েন্ট</p>
         </div>
-        <h2 class="section-title">Quick Actions</h2>
+        <h2 class="section-title">দ্রুত কাজ</h2>
         <div class="task-card" onclick="showView('tasks-view')">
           <div class="task-icon"><i class="fa-solid fa-list-check"></i></div>
-          <div class="task-details"><h3>View Tasks</h3><p>Watch ads and complete tasks to earn points.</p></div>
+          <div class="task-details"><h3>টাস্ক দেখুন</h3><p>বিজ্ঞাপন দেখে পয়েন্ট অর্জন করুন</p></div>
           <div class="task-arrow"><i class="fa-solid fa-chevron-right"></i></div>
         </div>
         <div class="task-card" onclick="openWithdrawModal()">
           <div class="task-icon"><i class="fa-solid fa-wallet"></i></div>
-          <div class="task-details"><h3>Withdraw Funds</h3><p>Request to withdraw your available balance.</p></div>
+          <div class="task-details"><h3>টাকা উত্তোলন</h3><p>আপনার ব্যালেন্স উত্তোলনের জন্য রিকোয়েস্ট করুন</p></div>
           <div class="task-arrow"><i class="fa-solid fa-chevron-right"></i></div>
         </div>
       </div>
 
       <div id="tasks-view" class="view">
-        <h2 class="section-title">Earning Tasks</h2>
+        <h2 class="section-title">আয়ের টাস্ক</h2>
         <div class="task-card" onclick="showRewardedInterstitial()">
           <div class="task-icon"><i class="fa-solid fa-rectangle-ad"></i></div>
-          <div class="task-details"><h3>Rewarded Interstitial</h3><p>Watch a full-screen ad to earn rewards.</p></div>
+          <div class="task-details"><h3>রিওয়ার্ডেড বিজ্ঞাপন</h3><p>পুরস্কার পেতে পূর্ণস্ক্রীন বিজ্ঞাপন দেখুন</p></div>
           <div class="task-arrow"><i class="fa-solid fa-play"></i></div>
         </div>
         <div class="task-card" onclick="showRewardedPopup()">
           <div class="task-icon"><i class="fa-solid fa-window-restore"></i></div>
-          <div class="task-details"><h3>Rewarded Popup</h3><p>View a popup ad for quick points.</p></div>
+          <div class="task-details"><h3>পপআপ বিজ্ঞাপন</h3><p>দ্রুত পয়েন্টের জন্য পপআপ বিজ্ঞাপন দেখুন</p></div>
           <div class="task-arrow"><i class="fa-solid fa-play"></i></div>
         </div>
       </div>
 
       <div id="leaderboard-view" class="view">
-        <h2 class="section-title">Top Earners</h2>
+        <h2 class="section-title">শীর্ষ উপার্জনকারী</h2>
         <div id="leaderboard-list"></div>
       </div>
 
       <div id="history-view" class="view">
-        <h2 class="section-title">Recent Activity</h2>
+        <h2 class="section-title">সাম্প্রতিক কার্যক্রম</h2>
         <div id="history-list"></div>
       </div>
     </main>
 
     <nav class="footer-nav">
-      <button class="nav-button active" onclick="showView('home-view')"><i class="icon fa-solid fa-house"></i>Home</button>
-      <button class="nav-button" onclick="showView('tasks-view')"><i class="icon fa-solid fa-list-check"></i>Tasks</button>
-      <button class="nav-button" onclick="showView('leaderboard-view')"><i class="icon fa-solid fa-trophy"></i>Leaders</button>
-      <button class="nav-button" onclick="showView('history-view')"><i class="icon fa-solid fa-clock-rotate-left"></i>History</button>
-      <button class="nav-button" onclick="shareApp()"><i class="icon fa-solid fa-share-nodes"></i>Share</button>
+      <button class="nav-button active" onclick="showView('home-view')"><i class="icon fa-solid fa-house"></i>হোম</button>
+      <button class="nav-button" onclick="showView('tasks-view')"><i class="icon fa-solid fa-list-check"></i>টাস্ক</button>
+      <button class="nav-button" onclick="showView('leaderboard-view')"><i class="icon fa-solid fa-trophy"></i>লিডারবোর্ড</button>
+      <button class="nav-button" onclick="showView('history-view')"><i class="icon fa-solid fa-clock-rotate-left"></i>ইতিহাস</button>
+      <button class="nav-button" onclick="shareApp()"><i class="icon fa-solid fa-share-nodes"></i>শেয়ার</button>
     </nav>
   </div>
 
   <div class="modal-overlay" id="withdraw-modal">
     <div class="modal-content">
-      <h3>Confirm Withdrawal</h3>
-      <p>You are about to request a withdrawal of your entire balance. Please confirm.</p>
+      <h3>উত্তোলন নিশ্চিত করুন</h3>
+      <p>আপনি আপনার সম্পূর্ণ ব্যালেন্স উত্তোলনের জন্য রিকোয়েস্ট করতে চলেছেন। দয়া করে নিশ্চিত করুন।</p>
       <div class="modal-actions">
-        <button class="action-button secondary-button" onclick="closeWithdrawModal()">Cancel</button>
-        <button class="action-button primary-button" onclick="requestWithdraw()">Confirm</button>
+        <button class="action-button secondary-button" onclick="closeWithdrawModal()">বাতিল</button>
+        <button class="action-button primary-button" onclick="requestWithdraw()">নিশ্চিত করুন</button>
       </div>
     </div>
   </div>
@@ -189,7 +235,25 @@ const ratePerPoint = 5.05;
 const BOT_TOKEN = '8002896346:AAEudGtjpNfudbTElW_n2M_hrMBzj2JvvpY';
 const ADMIN_USER_ID = '7580544870';
 
-document.addEventListener('DOMContentLoaded', () => initApp());
+// ওয়েবসাইট ব্লক করার ফাংশন
+function checkTelegramWebApp() {
+  if (window.Telegram && Telegram.WebApp) {
+    // টেলিগ্রাম ওয়েব অ্যাপে আছে
+    document.getElementById('website-blocker').style.display = 'none';
+    return true;
+  } else {
+    // সরাসরি ওয়েবসাইটে অ্যাক্সেস করছে
+    document.getElementById('website-blocker').style.display = 'flex';
+    document.querySelector('.container').style.display = 'none';
+    return false;
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (checkTelegramWebApp()) {
+    initApp();
+  }
+});
 
 function initApp(){
   if (window.Telegram && Telegram.WebApp) {
@@ -213,7 +277,7 @@ function showView(viewId){
 }
 
 function loadData(){
-  const saved = localStorage.getItem('easyEarningBotV2');
+  const saved = localStorage.getItem('nxEarnBotV2');
   if(saved){
     const d = JSON.parse(saved);
     points = d.points || 0;
@@ -223,16 +287,16 @@ function loadData(){
   updateDisplay();
 }
 function saveData(){
-  localStorage.setItem('easyEarningBotV2', JSON.stringify({points, balance, historyLog}));
+  localStorage.setItem('nxEarnBotV2', JSON.stringify({points, balance, historyLog}));
 }
 function updateDisplay(){
   document.getElementById('points-value').textContent = points;
-  document.getElementById('balance-value').textContent = `$${balance.toFixed(2)}`;
+  document.getElementById('balance-value').textContent = `৳${balance.toFixed(2)}`;
 }
 
 function loadTelegramUser(){
   if(tgUser){
-    document.getElementById('username').textContent = tgUser.first_name || 'Telegram User';
+    document.getElementById('username').textContent = tgUser.first_name || 'ব্যবহারকারী';
     const profilePicDiv = document.getElementById('profile-pic');
     if(tgUser.photo_url){
       profilePicDiv.innerHTML = `<img src="${tgUser.photo_url}" alt="P">`;
@@ -251,7 +315,7 @@ function addToHistory(type, detail){
 function renderHistory(){
   const list = document.getElementById('history-list');
   if(historyLog.length===0){
-    list.innerHTML = `<div class="list-item"><div class="info"><div class="name">No activity yet.</div><div class="detail">Watch some ads to get started!</div></div></div>`;
+    list.innerHTML = `<div class="list-item"><div class="info"><div class="name">কোন কার্যক্রম নেই</div><div class="detail">শুরু করতে কিছু বিজ্ঞাপন দেখুন!</div></div></div>`;
     return;
   }
   list.innerHTML = historyLog.map(item=>{
@@ -262,18 +326,18 @@ function renderHistory(){
 
 function renderLeaderboard(){
   const leaderboardData = [
-    { name: "CryptoKing", score: 2540, avatar: "https://i.pravatar.cc/150?img=1" },
-    { name: "Elena", score: 2210, avatar: "https://i.pravatar.cc/150?img=2" },
-    { name: "ProMiner", score: 1980, avatar: "https://i.pravatar.cc/150?img=3" },
-    { name: "Aisha", score: 1750, avatar: "https://i.pravatar.cc/150?img=4" },
-    { name: "BotMaster", score: 1530, avatar: "https://i.pravatar.cc/150?img=5" }
+    { name: "রাকিব", score: 2540, avatar: "https://i.pravatar.cc/150?img=1" },
+    { name: "সুমাইয়া", score: 2210, avatar: "https://i.pravatar.cc/150?img=2" },
+    { name: "আরাফাত", score: 1980, avatar: "https://i.pravatar.cc/150?img=3" },
+    { name: "ফারিহা", score: 1750, avatar: "https://i.pravatar.cc/150?img=4" },
+    { name: "নাঈম", score: 1530, avatar: "https://i.pravatar.cc/150?img=5" }
   ];
   document.getElementById('leaderboard-list').innerHTML = leaderboardData.map((user,index)=>`
     <div class="list-item">
       <div class="rank">#${index+1}</div>
       <img src="${user.avatar}" class="avatar" alt="Avatar">
       <div class="info"><div class="name">${user.name}</div></div>
-      <div class="score">${user.score} pts</div>
+      <div class="score">${user.score} পয়েন্ট</div>
     </div>
   `).join('');
 }
@@ -282,4 +346,101 @@ function grantReward(){
   points += pointsPerAd;
   balance = points * ratePerPoint;
   updateDisplay();
-  addToHistory('earn', `+${points
+  addToHistory('earn', `+${pointsPerAd} পয়েন্ট (বিজ্ঞাপন দেখেছেন)`);
+  saveData();
+  
+  // টেলিগ্রামে নোটিফিকেশন পাঠানো
+  if (tgUser) {
+    const message = `🎉 ${tgUser.first_name} বিজ্ঞাপন দেখে ${pointsPerAd} পয়েন্ট অর্জন করেছেন! মোট পয়েন্ট: ${points}`;
+    sendTelegramNotification(message);
+  }
+}
+
+function openWithdrawModal(){
+  if(balance <= 0){
+    alert("উত্তোলনের জন্য পর্যাপ্ত ব্যালেন্স নেই!");
+    return;
+  }
+  document.getElementById('withdraw-modal').classList.add('active');
+}
+function closeWithdrawModal(){
+  document.getElementById('withdraw-modal').classList.remove('active');
+}
+function requestWithdraw(){
+  if(!tgUser){
+    alert("টাকা উত্তোলনের জন্য টেলিগ্রামে লগইন করুন!");
+    return;
+  }
+  
+  const amount = balance;
+  points = 0;
+  balance = 0;
+  updateDisplay();
+  addToHistory('withdraw', `৳${amount.toFixed(2)} উত্তোলন রিকোয়েস্ট`);
+  saveData();
+  
+  // এডমিনকে নোটিফিকেশন পাঠানো
+  const userInfo = `ব্যবহারকারী: ${tgUser.first_name} ${tgUser.last_name || ''}\nইউজারনেম: @${tgUser.username || 'N/A'}\nআইডি: ${tgUser.id}`;
+  const message = `🔄 নতুন উত্তোলন রিকোয়েস্ট!\n\n${userInfo}\n\nপরিমাণ: ৳${amount.toFixed(2)}\n\nঅনুগ্রহ করে প্রসেস করুন।`;
+  sendTelegramNotification(message, ADMIN_USER_ID);
+  
+  closeWithdrawModal();
+  alert(`৳${amount.toFixed(2)} উত্তোলনের জন্য আপনার রিকোয়েস্ট গ্রহণ করা হয়েছে। ২৪ ঘন্টার মধ্যে প্রসেস করা হবে।`);
+}
+
+function sendTelegramNotification(message, chatId = ADMIN_USER_ID){
+  fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      chat_id: chatId,
+      text: message,
+      parse_mode: 'HTML'
+    })
+  }).catch(err => console.error('নোটিফিকেশন পাঠানো যায়নি:', err));
+}
+
+function showRewardedInterstitial(){
+  // গিগাপাব ইন্টারস্টিশিয়াল বিজ্ঞাপন দেখানো
+  if(typeof gigapub !== 'undefined'){
+    gigapub.showInterstitialAd().then(() => {
+      grantReward();
+    }).catch(err => {
+      console.error('বিজ্ঞাপন লোড করতে সমস্যা:', err);
+      alert("বিজ্ঞাপন লোড করতে সমস্যা হয়েছে। পরে আবার চেষ্টা করুন।");
+    });
+  } else {
+    // ডেমো উদ্দেশ্যে
+    if(confirm("একটি পূর্ণস্ক্রীন বিজ্ঞাপন দেখানো হবে। সমাপ্ত হলে আপনি পয়েন্ট পাবেন। চালিয়ে যেতে চান?")){
+      grantReward();
+    }
+  }
+}
+
+function showRewardedPopup(){
+  // গিগাপাব পপআপ বিজ্ঞাপন দেখানো
+  if(typeof gigapub !== 'undefined'){
+    gigapub.showPopupAd().then(() => {
+      grantReward();
+    }).catch(err => {
+      console.error('বিজ্ঞাপন লোড করতে সমস্যা:', err);
+      alert("বিজ্ঞাপন লোড করতে সমস্যা হয়েছে। পরে আবার চেষ্টা করুন।");
+    });
+  } else {
+    // ডেমো উদ্দেশ্যে
+    if(confirm("একটি পপআপ বিজ্ঞাপন দেখানো হবে। সমাপ্ত হলে আপনি পয়েন্ট পাবেন। চালিয়ে যেতে চান?")){
+      grantReward();
+    }
+  }
+}
+
+function shareApp(){
+  if (window.Telegram && Telegram.WebApp) {
+    Telegram.WebApp.shareUrl(`https://t.me/NxEarnBot`, "Nx Earn বটে যোগ দিন এবং টাকা আয় করুন!");
+  } else {
+    alert("অনুগ্রহ করে টেলিগ্রাম বট থেকে শেয়ার অপশন ব্যবহার করুন।");
+  }
+}
+</script>
+</body>
+</html>
