@@ -2,146 +2,284 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-  <title>Nx Earn</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+  <title>Tanbin Tech - Nx Bot</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-  <!-- Monetag SDK Script -->
-  <script src='//libtl.com/sdk.js' data-zone='9388728' data-sdk='show_9388728'></script>
-
-  <!-- Telegram Web App Script -->
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <!-- GigaPub ad script (replace YOUR_PROJECT_ID) -->
+  <script src="https://ad.gigapub.tech/script?id=YOUR_PROJECT_ID" async></script>
 
   <style>
+    :root {
+      --primary-color: #2ed914;
+      --primary-hover: #3bff21;
+      --secondary-color: #2a2a2e;
+      --background-color: #1c1c1f;
+      --text-color: #f0f0f0;
+      --text-muted-color: #a0a0a0;
+      --accent-color: #ff8c00;
+      --card-bg: #252528;
+    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     body {
-      font-family: sans-serif;
-      text-align: center;
-      background: #f8f8f8;
-      padding: 20px;
+      margin: 0; padding: 0;
+      background-color: var(--background-color);
+      color: var(--text-color);
+      font-family: 'Segoe UI', 'Roboto', sans-serif;
+      display: flex; justify-content: center; align-items: center;
+      height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
-    h1 {
-      color: #3b3b3b;
+    .container { width: 100%; height: 100%; max-width: 400px; background: var(--background-color);
+      display: flex; flex-direction: column; overflow: hidden; position: relative; }
+    main { flex-grow: 1; overflow-y: auto; padding: 20px; padding-bottom: 80px; }
+    .view { display: none; animation: fadeIn 0.4s ease-in-out; }
+    .view.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    .user-header-card {
+      background: var(--card-bg); border-radius: 16px; padding: 15px; margin-bottom: 25px;
+      display: flex; align-items: center; border: 1px solid rgba(255,255,255,0.05);
     }
-    button {
-      padding: 10px 20px;
-      margin: 10px;
-      font-size: 16px;
-      cursor: pointer;
+    .user-avatar { width: 50px; height: 50px; border-radius: 50%; margin-right: 15px; overflow: hidden;
+      background: linear-gradient(135deg, var(--primary-color), #00a651);
+      display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:20px;}
+    .user-avatar img{ width:100%; height:100%; object-fit:cover; }
+    .user-info .username { font-size:18px; font-weight:700; margin:0; }
+    .user-info .title { font-size:14px; color:var(--text-muted-color); margin:0; }
+
+    .balance-card { background: linear-gradient(135deg,#00a651,#00753a); border-radius:16px; padding:20px;
+      text-align:center; margin-bottom:25px; }
+    .balance-card .label{ font-size:16px; opacity:.8; margin-bottom:5px; }
+    .balance-card .balance-value{ font-size:36px; font-weight:800; margin:0; letter-spacing:1px; }
+    .balance-card .points-value{ font-size:16px; font-weight:600; color:var(--accent-color); margin-top:10px; }
+
+    .section-title { font-size:20px; font-weight:700; margin-bottom:15px; padding-left:5px; border-left:4px solid var(--primary-color); }
+    .task-card {
+      background: var(--card-bg); border-radius:12px; padding:20px; margin-bottom:15px;
+      display:flex; align-items:center; cursor:pointer; transition: transform .2s ease, background-color .2s ease;
+      border:1px solid rgba(255,255,255,0.05);
     }
-    input, select {
-      padding: 8px;
-      margin: 5px;
-      width: 90%;
-      max-width: 300px;
+    .task-card:hover{ transform:translateY(-3px); background-color:var(--secondary-color); }
+    .task-icon{ font-size:24px; color:var(--primary-color); margin-right:20px; width:30px; text-align:center;}
+    .task-details h3{ margin:0; font-size:16px; font-weight:600; }
+    .task-details p{ margin:3px 0 0; font-size:13px; color:var(--text-muted-color); }
+    .task-arrow{ margin-left:auto; font-size:18px; color:var(--text-muted-color); }
+
+    .list-item { display:flex; align-items:center; background:var(--card-bg); padding:12px 15px; border-radius:10px; margin-bottom:10px; border:1px solid rgba(255,255,255,0.05); }
+    .list-item .rank { font-size:16px; font-weight:700; color:var(--text-muted-color); width:30px; }
+    .list-item .avatar{ width:40px; height:40px; border-radius:50%; background:var(--secondary-color); margin-right:15px; object-fit:cover; }
+    .list-item .info{ flex-grow:1; }
+    .list-item .info .name{ font-weight:600; font-size:15px; }
+    .list-item .info .detail{ font-size:13px; color:var(--text-muted-color); }
+    .list-item .score{ font-size:16px; font-weight:700; color:var(--accent-color); }
+
+    .history-icon{ color:var(--primary-color); margin-right:15px; font-size:18px; }
+
+    .footer-nav {
+      position: fixed; bottom: 0; left: 0; right: 0; width:100%; max-width:400px; margin:0 auto;
+      display:flex; justify-content:space-around; background:var(--secondary-color); padding:10px 0; border-top:1px solid rgba(255,255,255,0.1);
     }
-    form {
-      margin-top: 30px;
-      background: #fff;
-      padding: 15px;
-      border-radius: 10px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      display: inline-block;
+    .nav-button {
+      display:flex; flex-direction:column; align-items:center; color:var(--text-muted-color); background:none; border:none; font-size:12px; transition: color .2s ease, transform .2s ease; cursor:pointer; padding:5px 10px;
     }
+    .nav-button .icon { font-size:22px; margin-bottom:4px; }
+    .nav-button:hover{ color:var(--text-color); }
+    .nav-button.active{ color:var(--primary-color); transform:scale(1.1); }
+
+    .action-button { width:100%; padding:15px; border-radius:12px; border:none; font-size:16px; font-weight:700; margin-top:15px; cursor:pointer; transition: all .3s ease; text-transform:uppercase; letter-spacing:1px; }
+    .primary-button{ background:var(--primary-color); color:#000; }
+    .primary-button:hover{ background:var(--primary-hover); transform:translateY(-2px); box-shadow: 0 5px 15px rgba(46,217,20,0.3); }
+    .secondary-button{ background:var(--secondary-color); color:var(--primary-color); }
+    .secondary-button:hover{ background:#3a3a3e; }
+
+    .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.7); display:none; align-items:center; justify-content:center; z-index:1000; animation:fadeIn .3s; }
+    .modal-overlay.active{ display:flex; }
+    .modal-content { background:var(--card-bg); padding:25px; border-radius:16px; width:90%; max-width:320px; text-align:center; animation: slideIn .3s; }
+    @keyframes slideIn { from{ transform:translateY(20px); opacity:0 } to{ transform:translateY(0); opacity:1 } }
+    .modal-content h3{ margin-top:0; font-size:20px; }
+    .modal-content p{ color:var(--text-muted-color); margin-bottom:25px; }
+    .modal-actions { display:flex; gap:10px; }
   </style>
+
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
-  <h1>Nx Earn</h1>
-  <p>Watch Ads and Earn USDT</p>
+  <div class="container">
+    <main id="main-content">
+      <div id="home-view" class="view active">
+        <div class="user-header-card">
+          <div class="user-avatar" id="profile-pic">EE</div>
+          <div class="user-info">
+            <h2 class="username" id="username">Loading...</h2>
+            <p class="title">Welcome Back!</p>
+          </div>
+        </div>
+        <div class="balance-card">
+          <p class="label">Total Balance</p>
+          <h1 class="balance-value" id="balance-value">$0.00</h1>
+          <p class="points-value"><i class="fa-solid fa-coins"></i> <span id="points-value">0</span> Points</p>
+        </div>
+        <h2 class="section-title">Quick Actions</h2>
+        <div class="task-card" onclick="showView('tasks-view')">
+          <div class="task-icon"><i class="fa-solid fa-list-check"></i></div>
+          <div class="task-details"><h3>View Tasks</h3><p>Watch ads and complete tasks to earn points.</p></div>
+          <div class="task-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+        </div>
+        <div class="task-card" onclick="openWithdrawModal()">
+          <div class="task-icon"><i class="fa-solid fa-wallet"></i></div>
+          <div class="task-details"><h3>Withdraw Funds</h3><p>Request to withdraw your available balance.</p></div>
+          <div class="task-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+        </div>
+      </div>
 
-  <div id="balance">Balance: USDT 0.00</div>
-  <button onclick="requestAd()">Watch Ad (+0.01 USDT)</button>
+      <div id="tasks-view" class="view">
+        <h2 class="section-title">Earning Tasks</h2>
+        <div class="task-card" onclick="showRewardedInterstitial()">
+          <div class="task-icon"><i class="fa-solid fa-rectangle-ad"></i></div>
+          <div class="task-details"><h3>Rewarded Interstitial</h3><p>Watch a full-screen ad to earn rewards.</p></div>
+          <div class="task-arrow"><i class="fa-solid fa-play"></i></div>
+        </div>
+        <div class="task-card" onclick="showRewardedPopup()">
+          <div class="task-icon"><i class="fa-solid fa-window-restore"></i></div>
+          <div class="task-details"><h3>Rewarded Popup</h3><p>View a popup ad for quick points.</p></div>
+          <div class="task-arrow"><i class="fa-solid fa-play"></i></div>
+        </div>
+      </div>
 
-  <form id="withdrawalForm">
-    <h3>Withdraw</h3>
-    <select id="paymentOption" required>
-      <option value="" disabled selected>Select Payment Option</option>
-      <option value="Bkash">Bkash</option>
-      <option value="Binance">Binance</option>
-    </select>
+      <div id="leaderboard-view" class="view">
+        <h2 class="section-title">Top Earners</h2>
+        <div id="leaderboard-list"></div>
+      </div>
 
-    <div id="bkashFields" style="display: none;">
-      <input type="text" placeholder="Enter Your Bkash Number" id="bkashNumber" />
+      <div id="history-view" class="view">
+        <h2 class="section-title">Recent Activity</h2>
+        <div id="history-list"></div>
+      </div>
+    </main>
+
+    <nav class="footer-nav">
+      <button class="nav-button active" onclick="showView('home-view')"><i class="icon fa-solid fa-house"></i>Home</button>
+      <button class="nav-button" onclick="showView('tasks-view')"><i class="icon fa-solid fa-list-check"></i>Tasks</button>
+      <button class="nav-button" onclick="showView('leaderboard-view')"><i class="icon fa-solid fa-trophy"></i>Leaders</button>
+      <button class="nav-button" onclick="showView('history-view')"><i class="icon fa-solid fa-clock-rotate-left"></i>History</button>
+      <button class="nav-button" onclick="shareApp()"><i class="icon fa-solid fa-share-nodes"></i>Share</button>
+    </nav>
+  </div>
+
+  <div class="modal-overlay" id="withdraw-modal">
+    <div class="modal-content">
+      <h3>Confirm Withdrawal</h3>
+      <p>You are about to request a withdrawal of your entire balance. Please confirm.</p>
+      <div class="modal-actions">
+        <button class="action-button secondary-button" onclick="closeWithdrawModal()">Cancel</button>
+        <button class="action-button primary-button" onclick="requestWithdraw()">Confirm</button>
+      </div>
     </div>
+  </div>
 
-    <div id="binanceFields" style="display: none;">
-      <input type="text" placeholder="Enter Binance UID" id="binanceUID" />
-    </div>
+<script>
+let points = 0;
+let balance = 0.00;
+let historyLog = [];
+let tgUser = null;
+const pointsPerAd = 1;
+const ratePerPoint = 5.05;
+const BOT_TOKEN = '8002896346:AAEudGtjpNfudbTElW_n2M_hrMBzj2JvvpY';
+const ADMIN_USER_ID = '7580544870';
 
-    <input type="number" placeholder="Enter Amount" id="amount" required />
-    <input type="email" placeholder="Enter Your Gmail" id="gmail1" required />
-    <input type="email" placeholder="Confirm Gmail" id="gmail2" required />
+document.addEventListener('DOMContentLoaded', () => initApp());
 
-    <button type="submit">Submit Withdrawal</button>
-  </form>
+function initApp(){
+  if (window.Telegram && Telegram.WebApp) {
+    Telegram.WebApp.ready();
+    Telegram.WebApp.expand();
+    tgUser = Telegram.WebApp.initDataUnsafe ? Telegram.WebApp.initDataUnsafe.user : null;
+  }
+  loadData();
+  loadTelegramUser();
+  showView('home-view');
+  renderLeaderboard();
+}
 
-  <script>
-    const ADMIN_ID = 7580544870;
-    const BOT_USERNAME = '@NxEranBot';
-    const WEBAPP_NAME = 'Nx Earn';
+function showView(viewId){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById(viewId).classList.add('active');
+  document.querySelectorAll('.nav-button').forEach(btn=>btn.classList.remove('active'));
+  const activeBtn = document.querySelector(`.nav-button[onclick="showView('${viewId}')"]`);
+  if(activeBtn) activeBtn.classList.add('active');
+  if(viewId === 'history-view') renderHistory();
+}
 
-    let balance = 0;
+function loadData(){
+  const saved = localStorage.getItem('easyEarningBotV2');
+  if(saved){
+    const d = JSON.parse(saved);
+    points = d.points || 0;
+    balance = d.balance || 0.00;
+    historyLog = d.historyLog || [];
+  }
+  updateDisplay();
+}
+function saveData(){
+  localStorage.setItem('easyEarningBotV2', JSON.stringify({points, balance, historyLog}));
+}
+function updateDisplay(){
+  document.getElementById('points-value').textContent = points;
+  document.getElementById('balance-value').textContent = `$${balance.toFixed(2)}`;
+}
 
-    function requestAd(type = 'rewarded') {
-      show_9388728(type === 'popup' ? 'pop' : undefined)
-        .then(() => {
-          balance += 0.01;
-          document.getElementById('balance').textContent = `Balance: USDT ${balance.toFixed(2)}`;
-        })
-        .catch(() => alert("Ad failed or skipped"));
+function loadTelegramUser(){
+  if(tgUser){
+    document.getElementById('username').textContent = tgUser.first_name || 'Telegram User';
+    const profilePicDiv = document.getElementById('profile-pic');
+    if(tgUser.photo_url){
+      profilePicDiv.innerHTML = `<img src="${tgUser.photo_url}" alt="P">`;
+    } else {
+      profilePicDiv.textContent = (tgUser.first_name || 'U').charAt(0);
     }
+  }
+}
 
-    // Withdrawal form logic
-    const form = document.getElementById('withdrawalForm');
-    const paymentOption = document.getElementById('paymentOption');
-    const bkashFields = document.getElementById('bkashFields');
-    const binanceFields = document.getElementById('binanceFields');
+function addToHistory(type, detail){
+  const ts = new Date().toISOString();
+  historyLog.unshift({type, detail, timestamp: ts});
+  if(historyLog.length>50) historyLog.pop();
+  saveData();
+}
+function renderHistory(){
+  const list = document.getElementById('history-list');
+  if(historyLog.length===0){
+    list.innerHTML = `<div class="list-item"><div class="info"><div class="name">No activity yet.</div><div class="detail">Watch some ads to get started!</div></div></div>`;
+    return;
+  }
+  list.innerHTML = historyLog.map(item=>{
+    const icon = item.type === 'earn' ? '<i class="fa-solid fa-plus-circle" style="color: var(--primary-color);"></i>' : '<i class="fa-solid fa-paper-plane" style="color: var(--accent-color);"></i>';
+    return `<div class="list-item"><div class="history-icon">${icon}</div><div class="info"><div class="name">${item.detail}</div><div class="detail">${new Date(item.timestamp).toLocaleString()}</div></div></div>`;
+  }).join('');
+}
 
-    paymentOption.addEventListener('change', () => {
-      bkashFields.style.display = paymentOption.value === 'Bkash' ? 'block' : 'none';
-      binanceFields.style.display = paymentOption.value === 'Binance' ? 'block' : 'none';
-    });
+function renderLeaderboard(){
+  const leaderboardData = [
+    { name: "CryptoKing", score: 2540, avatar: "https://i.pravatar.cc/150?img=1" },
+    { name: "Elena", score: 2210, avatar: "https://i.pravatar.cc/150?img=2" },
+    { name: "ProMiner", score: 1980, avatar: "https://i.pravatar.cc/150?img=3" },
+    { name: "Aisha", score: 1750, avatar: "https://i.pravatar.cc/150?img=4" },
+    { name: "BotMaster", score: 1530, avatar: "https://i.pravatar.cc/150?img=5" }
+  ];
+  document.getElementById('leaderboard-list').innerHTML = leaderboardData.map((user,index)=>`
+    <div class="list-item">
+      <div class="rank">#${index+1}</div>
+      <img src="${user.avatar}" class="avatar" alt="Avatar">
+      <div class="info"><div class="name">${user.name}</div></div>
+      <div class="score">${user.score} pts</div>
+    </div>
+  `).join('');
+}
 
-    form.addEventListener('submit', function (e) {
-      e.preventDefault();
-
-      const option = paymentOption.value;
-      const amount = document.getElementById('amount').value;
-      const gmail1 = document.getElementById('gmail1').value;
-      const gmail2 = document.getElementById('gmail2').value;
-
-      if (gmail1 !== gmail2) {
-        alert("Gmail addresses do not match.");
-        return;
-      }
-
-      const tg = window.Telegram.WebApp;
-      const user = tg.initDataUnsafe.user;
-
-      let userData = {
-        name: user.first_name || '',
-        username: user.username || '',
-        telegram_id: user.id,
-        gmail: gmail1,
-        amount: amount,
-        payment_option: option,
-        number_or_uid: option === 'Bkash'
-          ? document.getElementById('bkashNumber').value
-          : document.getElementById('binanceUID').value
-      };
-
-      // Send to admin (use bot backend or Telegram API here)
-      alert(
-        `Withdrawal Request Sent!\n\n` +
-        `Name: ${userData.name}\n` +
-        `Username: @${userData.username}\n` +
-        `Telegram ID: ${userData.telegram_id}\n` +
-        `Gmail: ${userData.gmail}\n` +
-        `Amount: ${userData.amount} USDT\n` +
-        `Option: ${userData.payment_option}\n` +
-        `Number/UID: ${userData.number_or_uid}`
-      );
-
-      // You should send this data to your Telegram bot backend (not shown here)
-    });
-  </script>
-</body>
-</html>
+function grantReward(){
+  points += pointsPerAd;
+  balance = points * ratePerPoint;
+  updateDisplay();
+  addToHistory('earn', `+${points
