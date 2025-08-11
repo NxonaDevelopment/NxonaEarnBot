@@ -1,1 +1,174 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+  <title>Nx Earn বট</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+  <style>
+    body { font-family: sans-serif; margin: 0; background: #f5f5f5; }
+    header { background: #4CAF50; color: #fff; padding: 15px; text-align: center; font-size: 20px; }
+    main { padding: 15px; }
+    .section-title { font-size: 18px; margin-bottom: 10px; }
+    .task-card { background: #fff; padding: 15px; display: flex; align-items: center; margin-bottom: 10px; border-radius: 8px; cursor: pointer; }
+    .task-card:hover { background: #f0f0f0; }
+    .task-icon { font-size: 24px; margin-right: 10px; color: #4CAF50; }
+    .task-details h3 { margin: 0; font-size: 16px; }
+    .task-details p { margin: 3px 0 0; font-size: 14px; color: #666; }
+    .task-arrow { margin-left: auto; font-size: 18px; color: #999; }
+    nav.footer-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; display: flex; border-top: 1px solid #ddd; }
+    .nav-button { flex: 1; padding: 10px; text-align: center; border: none; background: none; font-size: 14px; }
+    .nav-button.active { color: #4CAF50; }
+    .payment-option { margin-top: 15px; }
+    input { width: 100%; padding: 8px; margin-bottom: 8px; border-radius: 5px; border: 1px solid #ccc; }
+    .action-button { padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; }
+    .primary-button { background: #4CAF50; color: #fff; }
+    .secondary-button { background: #ccc; }
+  </style>
+</head>
+<body>
 
+<header>
+  ## Nx Earn বটে স্বাগতম!
+</header>
+
+<main id="home-view" class="view active">
+  <p>এই সেবাটি শুধুমাত্র টেলিগ্রাম বটের মাধ্যমে ব্যবহারযোগ্য। ওয়েবসাইটে সরাসরি এক্সেস করা সম্ভব নয়।</p>
+  <p><a href="https://t.me/NxEranBot" target="_blank">[** টেলিগ্রামে খুলুন]</a></p>
+  <h3>মোট ব্যালেন্স</h3>
+  <h2 id="balance">৳০.০০</h2>
+  <p><strong id="coins">০ কয়েন</strong> (১০ কয়েন = ৳১)</p>
+</main>
+
+<!-- টাস্ক সেকশন -->
+<div id="tasks-view" class="view" style="display:none;">
+  <h2 class="section-title">আয়ের টাস্ক</h2>
+  <div class="task-card" onclick="showRewardedAd()">
+    <div class="task-icon"><i class="fa-solid fa-rectangle-ad"></i></div>
+    <div class="task-details">
+      <h3>রিওয়ার্ডেড বিজ্ঞাপন</h3>
+      <p>পুরস্কার পেতে পূর্ণস্ক্রীন বিজ্ঞাপন দেখুন (৫ কয়েন)</p>
+    </div>
+    <div class="task-arrow"><i class="fa-solid fa-play"></i></div>
+  </div>
+  <div class="task-card" onclick="showPopupAd()">
+    <div class="task-icon"><i class="fa-solid fa-window-restore"></i></div>
+    <div class="task-details">
+      <h3>পপআপ বিজ্ঞাপন</h3>
+      <p>দ্রুত কয়েনের জন্য পপআপ বিজ্ঞাপন দেখুন (৫ কয়েন)</p>
+    </div>
+    <div class="task-arrow"><i class="fa-solid fa-play"></i></div>
+  </div>
+</div>
+
+<!-- লিডারবোর্ড -->
+<div id="leaderboard-view" class="view" style="display:none;">
+  <h2 class="section-title">শীর্ষ উপার্জনকারী</h2>
+  <div id="leaderboard-list"></div>
+</div>
+
+<!-- ইতিহাস -->
+<div id="history-view" class="view" style="display:none;">
+  <h2 class="section-title">সাম্প্রতিক কার্যক্রম</h2>
+  <div id="history-list"></div>
+</div>
+
+<!-- উত্তোলন -->
+<div id="withdraw-view" class="view" style="display:none;">
+  <h2 class="section-title">উত্তোলন রিকোয়েস্ট</h2>
+  <label>পেমেন্ট মেথড</label>
+  <select id="payment-method" onchange="togglePaymentOption()">
+    <option value="">পেমেন্ট মেথড নির্বাচন করুন</option>
+    <option value="bkash">বিকাশ</option>
+    <option value="binance">বাইন্যান্স</option>
+  </select>
+
+  <div id="bkash-option" class="payment-option" style="display:none;">
+    <label>বিকাশ নম্বর</label>
+    <input type="text" placeholder="01XXXXXXXXX">
+    <label>টাকার পরিমাণ (৳)</label>
+    <input type="number" placeholder="100">
+    <p class="min-amount">ন্যূনতম উত্তোলন: 100 কয়েন (৳10)</p>
+    <label>ইমেইল</label>
+    <input type="email" placeholder="your@gmail.com">
+  </div>
+
+  <div id="binance-option" class="payment-option" style="display:none;">
+    <label>বাইন্যান্স UID</label>
+    <input type="text" placeholder="12345678">
+    <label>টাকার পরিমাণ (৳)</label>
+    <input type="number" placeholder="100">
+    <p class="min-amount">ন্যূনতম উত্তোলন: 100 কয়েন (৳10)</p>
+    <label>ইমেইল</label>
+    <input type="email" placeholder="your@gmail.com">
+  </div>
+
+  <div class="modal-actions" style="margin-top:20px;">
+    <button class="action-button secondary-button" onclick="showView('home-view')">বাতিল</button>
+    <button class="action-button primary-button" onclick="submitWithdrawRequest()">সাবমিট করুন</button>
+  </div>
+</div>
+
+<!-- নিচের মেনু -->
+<nav class="footer-nav">
+  <button class="nav-button active" onclick="showView('home-view')"><i class="icon fa-solid fa-house"></i> হোম</button>
+  <button class="nav-button" onclick="showView('tasks-view')"><i class="icon fa-solid fa-list-check"></i> টাস্ক</button>
+  <button class="nav-button" onclick="showView('leaderboard-view')"><i class="icon fa-solid fa-trophy"></i> লিডারবোর্ড</button>
+  <button class="nav-button" onclick="showView('history-view')"><i class="icon fa-solid fa-clock-rotate-left"></i> ইতিহাস</button>
+  <button class="nav-button" onclick="showView('withdraw-view')"><i class="icon fa-solid fa-hand-holding-dollar"></i> উত্তোলন</button>
+</nav>
+
+<!-- GigaPub SDK -->
+<script src="https://cdn.gigapub.com/sdk.js"></script>
+<script>
+  let coins = 0;
+
+  function updateBalance() {
+    document.getElementById("coins").innerText = coins + " কয়েন";
+    document.getElementById("balance").innerText = "৳" + (coins / 10).toFixed(2);
+  }
+
+  function showRewardedAd() {
+    window.showGiga("main", { adId: 1476 })
+      .then(() => {
+        coins += 5;
+        updateBalance();
+        alert("আপনি ৫ কয়েন পেয়েছেন!");
+      })
+      .catch(() => alert("বিজ্ঞাপন লোড হয়নি!"));
+  }
+
+  function showPopupAd() {
+    window.showGiga("main", { adId: 1476 })
+      .then(() => {
+        coins += 5;
+        updateBalance();
+        alert("আপনি ৫ কয়েন পেয়েছেন!");
+      })
+      .catch(() => alert("বিজ্ঞাপন লোড হয়নি!"));
+  }
+
+  function showView(id) {
+    document.querySelectorAll('.view').forEach(v => v.style.display = 'none');
+    document.getElementById(id).style.display = 'block';
+    document.querySelectorAll('.nav-button').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+  }
+
+  function togglePaymentOption() {
+    document.getElementById('bkash-option').style.display = 'none';
+    document.getElementById('binance-option').style.display = 'none';
+    const method = document.getElementById('payment-method').value;
+    if (method === 'bkash') document.getElementById('bkash-option').style.display = 'block';
+    if (method === 'binance') document.getElementById('binance-option').style.display = 'block';
+  }
+
+  function submitWithdrawRequest() {
+    alert("আপনার উত্তোলন রিকোয়েস্ট জমা হয়েছে!");
+  }
+
+  updateBalance();
+</script>
+
+</body>
+</html>
